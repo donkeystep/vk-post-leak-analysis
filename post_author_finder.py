@@ -1,6 +1,8 @@
 import datetime
 import os
 import pandas as pd
+from matplotlib import pyplot
+
 import constant
 import util
 
@@ -42,6 +44,10 @@ idsWithDuplicates = sum(postsDf.userIds.tolist(), [])
 id_counts = {i: idsWithDuplicates.count(i) for i in idsWithDuplicates}
 sorted_id_counts = {k: v for k, v in sorted(id_counts.items(), key=lambda item: item[1], reverse=True)}
 sorted_id_counts_df = pd.DataFrame(list(sorted_id_counts.items()), columns=['id', 'matches'])
+
+util.plot_people_online(onlineMembersDf, sorted_id_counts_df['id'])
+util.plot_post_dates_as_v_lines(postsDf['date'])
+pyplot.show()
 
 sorted_id_counts_df['link'] = sorted_id_counts_df['id'].apply(lambda x: 'https://vk.com/id' + str(x))
 

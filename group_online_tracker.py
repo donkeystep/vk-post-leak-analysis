@@ -25,4 +25,6 @@ while True:
         dump_group_members_online(id_dump)
     except Exception as e:
         print('error during dump, skipping: ' + str(e))
+    if datetime.datetime.now().minute == 0 and datetime.datetime.now().second <= 30:
+        util.backup_group_members_file(constant.ID_DUMP_FILENAME)
     sleep(int(os.getenv("WAIT_INTERVAL_SECONDS")))

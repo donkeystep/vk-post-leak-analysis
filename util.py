@@ -2,8 +2,12 @@ import ast
 import itertools
 import os
 import pathlib
+import time
 import pandas as pd
 import vk_api
+from shutil import copyfile
+from matplotlib import pyplot
+from numpy import full
 
 import constant
 
@@ -39,3 +43,21 @@ def get_ids_closest_by_date(target_date, df):
 
     closest_lines_ints = list([ast.literal_eval(x) for x in closest_lines['idsOnline']])
     return list(set(itertools.chain(*closest_lines_ints)))
+
+
+def backup_group_members_file(path):
+    backup_filename = "{0}_{2}{1}".format(*os.path.splitext(path) + (time.strftime("%Y-%m-%d_%H-%M-%S"),))
+    copyfile(path, backup_filename)
+
+
+def plot_people_online(members_df, ids_series):
+    for index, id in ids_series.items():
+        dates = members_df[members_df['idsOnline'].str.contains(str(id))]['date']
+        pyplot.scatter(dates, full((dates.size), index))
+
+
+def plot_post_dates_as_v_lines(series):
+    for xc in series:
+        pyplot.axvline(x=xc)
+
+
