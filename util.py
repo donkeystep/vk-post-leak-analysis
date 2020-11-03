@@ -50,10 +50,14 @@ def backup_group_members_file(path):
     copyfile(path, backup_filename)
 
 
-def plot_people_online(members_df, ids_series):
-    for index, id in ids_series.items():
-        dates = members_df[members_df['idsOnline'].str.contains(str(id))]['date']
-        pyplot.scatter(dates, full((dates.size), index))
+def plot_people_online(members_df, ids_matches_df):
+    top_matches = ids_matches_df['matches'][0]
+    is_top_match = ids_matches_df['matches'] == top_matches
+    ids_matches_top_df = ids_matches_df[is_top_match]
+    for index, row in ids_matches_top_df.iterrows():
+        dates = members_df[members_df['idsOnline'].str.contains(str(row['id']))]['date']
+        pyplot.scatter(dates, full(dates.size, index), label=str(row['id']))
+    pyplot.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=4)
 
 
 def plot_post_dates_as_v_lines(series):

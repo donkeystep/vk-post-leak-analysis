@@ -7,7 +7,7 @@ import constant
 import util
 
 GROUP_ID = -int(os.getenv("DUPLICATE_GROUP_ID"))
-ANALYSIS_START_DATE = datetime.datetime(2020, 10, 26)
+ANALYSIS_START_DATE = datetime.datetime(2020, 10, 30)
 
 postsDf = pd.DataFrame(columns=['date', 'id', 'text', 'link', 'userIds'])
 
@@ -45,7 +45,7 @@ id_counts = {i: idsWithDuplicates.count(i) for i in idsWithDuplicates}
 sorted_id_counts = {k: v for k, v in sorted(id_counts.items(), key=lambda item: item[1], reverse=True)}
 sorted_id_counts_df = pd.DataFrame(list(sorted_id_counts.items()), columns=['id', 'matches'])
 
-util.plot_people_online(onlineMembersDf, sorted_id_counts_df['id'])
+util.plot_people_online(onlineMembersDf, sorted_id_counts_df)
 util.plot_post_dates_as_v_lines(postsDf['date'])
 pyplot.show()
 
@@ -53,4 +53,4 @@ sorted_id_counts_df['link'] = sorted_id_counts_df['id'].apply(lambda x: 'https:/
 
 # save and print the counts with ids
 sorted_id_counts_df.to_excel(constant.POSSIBLE_POST_AUTHORS_FILENAME)
-print(sorted_id_counts_df)
+print(sorted_id_counts_df.to_string())
