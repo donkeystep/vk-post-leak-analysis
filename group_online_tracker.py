@@ -14,17 +14,28 @@ def dump_group_members_online(members_df):
     print('Dumping online members ' + str(now))
     id_dump_row = pd.Series({'date': now, 'idsOnline': ids_online})
     members_df.loc[len(members_df)] = id_dump_row
-    members_df.to_excel(constant.ID_DUMP_FILENAME)
 
 
 vk = util.initialize_vk(constant.GROUP_TOKEN_KEY)
 id_dump = util.initialize_id_dump()
 
+save_count = 0
+backup_count = 0
+MAX_SAVE_COUNT = 0
+
 while True:
+    save_count += 1
+    backup_count += 1
     try:
         dump_group_members_online(id_dump)
     except Exception as e:
         print('error during dump, skipping: ' + str(e))
-    if datetime.datetime.now().minute == 0 and datetime.datetime.now().second <= 30:
+    if save_count > MAX_SAVE_COUNT:
+        save_count = 0
+        id_dump.to_csv(constant.ID_DUMP_FILENAME, sep='\t', encoding='utf-8', mode='a', index=False, header=False)
+        print('Saved  ' + str(datetime.datetime.now()))
+        id_dump = util.initialize_id_dump()
+    if backup_count > 60:
+        backup_count = 0
         util.backup_group_members_file(constant.ID_DUMP_FILENAME)
     sleep(int(os.getenv("WAIT_INTERVAL_SECONDS")))

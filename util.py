@@ -24,10 +24,11 @@ def get_id_dump_filepath():
 
 
 def initialize_id_dump():
-    data_file_path = get_id_dump_filepath()
-    if not os.path.isfile(data_file_path):
-        pd.DataFrame(columns=['date', 'idsOnline']).to_excel(constant.ID_DUMP_FILENAME)
-    return pd.read_excel(get_id_dump_filepath(), index_col=0)
+    return pd.DataFrame(columns=['date', 'idsOnline'])
+
+
+def get_id_dump_df():
+    return pd.read_csv(get_id_dump_filepath(), sep='\t', parse_dates=[0])
 
 
 def get_ids_closest_by_date(target_date, df):
@@ -51,6 +52,8 @@ def backup_group_members_file(path):
 
 
 def plot_people_online(members_df, ids_matches_df):
+    if ids_matches_df.size == 0:
+        return
     top_matches = ids_matches_df['matches'][0]
     is_top_match = ids_matches_df['matches'] == top_matches
     ids_matches_top_df = ids_matches_df[is_top_match]
@@ -63,5 +66,3 @@ def plot_people_online(members_df, ids_matches_df):
 def plot_post_dates_as_v_lines(series):
     for xc in series:
         pyplot.axvline(x=xc)
-
-
